@@ -49,18 +49,44 @@
 
         .section-title { font-size: 1.1rem; font-weight: 900; color: var(--ow-orange); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* 팀 리스트 스타일 */
-        .lane-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 10px; background: rgba(255,255,255,0.04); border-radius: 12px; transition: 0.3s ease; border: 1px solid transparent; }
-        .lane-tag { width: 75px; font-size: 0.75rem; font-weight: 800; color: #000; text-align: center; background: #fff; padding: 7px 0; border-radius: 6px; }
-        .player-input { flex: 1; height: 40px; background: transparent; border: none; border-bottom: 2px solid #555; color: #fff; text-align: center; outline: none; }
+        /* --- 팀 리스트 스타일 수정 (핵심) --- */
+        .lane-row { 
+            display: flex; align-items: center; gap: 6px; margin-bottom: 10px; 
+            padding: 8px; background: rgba(255,255,255,0.04); border-radius: 12px; 
+            border: 1px solid transparent; transition: 0.3s;
+        }
         
-        .lock-btn-ow { background: #222 url('ow_logo.png') no-repeat center / 60%; border: 1px solid #444; width: 42px; height: 48px; cursor: pointer; opacity: 0.4; border-radius: 10px; filter: grayscale(100%); transition: 0.3s; background-size: cover;}
-        
-        .lock-btn-ow.active { opacity: 1; filter: grayscale(0%); border-color: var(--ow-orange); box-shadow: 0 0 10px var(--ow-orange); }
-        .lane-row.locked-row { background: rgba(249, 158, 26, 0.15); border-color: var(--ow-orange); }
-        .lane-row.locked-row .player-input { color: #888; border-bottom-color: rgba(249, 158, 26, 0.3); }
+        .lane-tag { 
+            width: 55px; min-width: 55px; /* 너비 고정 */
+            font-size: 0.7rem; font-weight: 900; color: #000; 
+            text-align: center; background: #fff; padding: 10px 0; border-radius: 6px; 
+            white-space: nowrap;
+        }
 
-        /* 모드 선택 (필터) */
+        .player-input { 
+            flex: 1; /* 남은 공간 균등 배분 */
+            width: 100%; height: 40px; background: rgba(0,0,0,0.2); 
+            border: none; border-bottom: 2px solid #555; color: #fff; 
+            text-align: center; outline: none; font-size: 0.9rem;
+        }
+        
+        .lock-btn-ow { 
+            width: 32px; min-width: 32px; height: 40px;
+            background: #222 url('ow_logo.png') no-repeat center / 60%; 
+            border: 1px solid #444; cursor: pointer; opacity: 0.3; 
+            border-radius: 8px; filter: grayscale(100%); transition: 0.2s; 
+            background-size: contain;
+        }
+        
+        /* 자물쇠 이미지가 없을 경우를 대비한 대체 아이콘 */
+        .lock-btn-ow::after { content: '🔓'; font-size: 12px; display: block; }
+        .lock-btn-ow.active::after { content: '🔒'; }
+
+        .lock-btn-ow.active { opacity: 1; filter: grayscale(0%); border-color: var(--ow-orange); box-shadow: 0 0 8px var(--ow-orange); }
+        .lane-row.locked-row { background: rgba(249, 158, 26, 0.1); border-color: var(--ow-orange); }
+        .lane-row.locked-row .player-input { color: #aaa; border-bottom-color: rgba(249, 158, 26, 0.3); }
+
+        /* --- 맵 섹션 및 기타 스타일 --- */
         .mode-filter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
         .mode-chip { 
             padding: 12px 5px; font-size: 0.8rem; font-weight: 900; text-align: center; border-radius: 10px;
@@ -69,7 +95,6 @@
         .mode-chip.active { border-color: var(--ow-orange); background: rgba(249, 158, 26, 0.1); }
         .mode-chip.disabled { opacity: 0.3; filter: grayscale(100%); text-decoration: line-through; }
 
-        /* 맵 선택 영역 (노란색/주황색 테마 적용) */
         .map-scroll-area { flex: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 15px; }
         .map-group { margin-bottom: 15px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; border-left: 3px solid var(--ow-orange); }
         .map-group-title { font-size: 0.8rem; font-weight: 800; color: var(--ow-orange); margin-bottom: 8px; display: flex; justify-content: space-between; }
@@ -94,17 +119,16 @@
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+
+        /* --- 모바일 최적화 미디어 쿼리 --- */
         @media (max-width: 768px) {
-            .main-content-wrapper {
-                flex-direction: column; /* 가로 배치를 세로 배치로 변경 */
-            }
-            .section-card {
-                min-height: auto; /* 고정 높이 해제 */
-                width: 100%;
-            }
-            .mode-filter-grid {
-                grid-template-columns: repeat(2, 1fr); /* 맵 필터를 2열로 변경하여 터치 영역 확보 */
-            }
+            body { padding: 10px; }
+            .main-content-wrapper { flex-direction: column; gap: 15px; }
+            .section-card { min-height: auto; padding: 15px; width: 100%; }
+            .mode-filter-grid { grid-template-columns: repeat(3, 1fr); }
+            .map-items-wrapper { grid-template-columns: repeat(2, 1fr); } /* 모바일에서 맵 리스트는 2열이 가독성 좋음 */
+            .lane-tag { width: 50px; min-width: 50px; font-size: 0.65rem; }
+            .player-input { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -136,14 +160,11 @@
             <section class="section-card section-map">
                 <div class="section-title">맵 선택 (클릭하여 제외)</div>
                 <div class="mode-filter-grid" id="mode-filter-grid"></div>
-                
                 <div class="map-scroll-area" id="map-scroll-area"></div>
-                
                 <div class="map-result-box">
                     <p id="m-count" style="font-size: 0.65rem; color: #555; margin-bottom: 5px;">SELECTED 전장</p>
                     <h2 id="selected-map-name">READY</h2>
                 </div>
-
                 <div class="btn-container">
                     <button class="main-action-btn" onclick="shuffleMap()">🗺️ 맵 무작위 선택</button>
                     <div class="sub-btn-group">
