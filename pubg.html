@@ -15,13 +15,36 @@
             --caution-stripe: repeating-linear-gradient(45deg, #f2a900, #f2a900 10px, #000 10px, #000 20px);
         }
 
+        /* 💥 효과 애니메이션 정의 */
+        @keyframes pubg-shake {
+            0% { transform: translate(0,0); }
+            10% { transform: translate(-2px, -2px); }
+            30% { transform: translate(3px, 2px); }
+            50% { transform: translate(-3px, 1px); }
+            70% { transform: translate(2px, 1px); }
+            90% { transform: translate(-1px, -1px); }
+            100% { transform: translate(0,0); }
+        }
+
+        @keyframes glitch-text {
+            0% { transform: translateX(0); opacity: 1; }
+            20% { transform: translateX(-3px); filter: hue-rotate(90deg); }
+            40% { transform: translateX(3px); opacity: 0.7; }
+            60% { transform: translateX(-3px); filter: hue-rotate(-90deg); }
+            80% { transform: translateX(2px); opacity: 0.8; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        .shake-active { animation: pubg-shake 0.3s ease-in-out; }
+        .glitch-active { animation: glitch-text 0.3s infinite; }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
             background-color: var(--pubg-dark);
             background-image: 
                 linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
-                url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80'); /* 어두운 질감 배경 */
+                url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80');
             background-size: cover;
             background-attachment: fixed;
             font-family: 'Pretendard', sans-serif;
@@ -36,12 +59,11 @@
             position: relative;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             margin: auto;
-            clip-path: polygon(0 0, 95% 0, 100% 5%, 100% 100%, 5% 100%, 0 95%); /* 전술적 각진 디자인 */
+            clip-path: polygon(0 0, 95% 0, 100% 5%, 100% 100%, 5% 100%, 0 95%);
+            transition: transform 0.1s;
         }
 
-        /* 상단 경고줄 무늬 */
         .caution-bar { height: 10px; background: var(--caution-stripe); width: 100%; }
-
         .content-padding { padding: 30px; }
 
         .top-visual { text-align: center; margin-bottom: 20px; }
@@ -75,10 +97,10 @@
             flex: 1; height: 45px; background: #1a1a1a; 
             border: 1px solid #444; color: #fff;
             padding: 0 12px; font-weight: 700; text-align: center; outline: none;
+            transition: 0.1s;
         }
         .player-input:focus { border-color: var(--pubg-yellow); background: #222; }
 
-        /* 🖱️ 3뚝(헬멧) 잠금 버튼 */
         .lock-btn-pubg { 
             background-color: #333;
             background-image: url('https://i.namu.wiki/i/3OKUti7xu-1_eGueOMcp5TlbjdNNtZ6wvUSGJNEpVuL_1C2k85b6DWuK1M4NDqipXy0F8TyJ9jcWTCdhRrabwg.webp'); 
@@ -104,50 +126,38 @@
             background: var(--pubg-yellow); color: #000; border: none; padding: 20px;
             font-weight: 900; cursor: pointer; font-size: 1.1rem; text-transform: uppercase;
             clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+            transition: transform 0.1s;
         }
+        .main-btn:active { transform: scale(0.95); }
         .main-btn:hover { background: #ffcc00; filter: brightness(1.1); }
 
         .footer-buttons { display: flex; gap: 8px; }
         .sub-btn { 
             flex: 1; background: #222; border: 1px solid #444; padding: 14px; 
             font-weight: 800; cursor: pointer; font-size: 0.85rem; color: #888;
+            transition: 0.1s;
         }
+        .sub-btn:active { transform: scale(0.95); }
         .highlight { border-color: var(--pubg-yellow); color: var(--pubg-yellow); }
 
         .home-btn-text { background: transparent; color: #555; border: none; cursor: pointer; font-weight: 700; margin: 20px auto; display: block; text-decoration: underline; }
         
         @media (max-width: 480px) {
-        body { padding: 10px; } /* 외부 여백 감소 */
-        .container { width: 100%; clip-path: none; } /* 모바일에서 가로 꽉 차게 (선택사항: 각진 디자인 유지하고 싶으면 그대로 두셔도 됩니다) */
-        .content-padding { padding: 15px 10px; }
-        
-        .team-labels { padding: 0 10px; justify-content: space-around; }
-        .label { font-size: 0.8rem; padding: 4px 8px; }
-    
-        .lane-row { 
-            gap: 5px; /* 간격 축소 */
-            padding: 8px 5px; 
+            body { padding: 10px; }
+            .container { width: 100%; clip-path: none; }
+            .content-padding { padding: 15px 10px; }
+            .team-labels { padding: 0 10px; justify-content: space-around; }
+            .label { font-size: 0.8rem; padding: 4px 8px; }
+            .lane-row { gap: 5px; padding: 8px 5px; }
+            .lane-tag { width: 50px; font-size: 0.7rem; }
+            .player-input { font-size: 0.9rem; padding: 0 5px; min-width: 0; }
+            .lock-btn-pubg { width: 40px; height: 40px; }
+            .main-btn { padding: 15px; font-size: 1rem; }
         }
-        .lane-tag { 
-            width: 50px; /* 태그 너비 축소 */
-            font-size: 0.7rem; 
-        }
-        .player-input { 
-            font-size: 0.9rem; 
-            padding: 0 5px; 
-            min-width: 0; /* flex 환경에서 찌그러짐 방지 */
-        }
-        .lock-btn-pubg { 
-            width: 40px; /* 버튼 크기 소폭 축소 */
-            height: 40px; 
-        }
-        
-        .main-btn { padding: 15px; font-size: 1rem; }
-    }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="main-container">
         <div class="caution-bar"></div>
         <div class="content-padding">
             <div class="top-visual">
@@ -169,7 +179,7 @@
             </div>
 
             <footer>
-                <button class="main-btn" id="shuffle-btn" onclick="shuffleTeams()">🪄 팀 재배치 (SHUFFLE)</button>
+                <button class="main-btn" id="shuffle-btn" onclick="shuffleWithEffect()">🪄 팀 재배치 (SHUFFLE)</button>
                 <div class="footer-buttons">
                     <button class="sub-btn" onclick="resetInputs()">🔄 초기화</button>
                     <button class="sub-btn highlight" onclick="copyResult()">📋 결과 복사</button>
@@ -202,6 +212,38 @@
             row.classList.toggle('locked-row');
         }
 
+        // 💥 효과를 동반한 셔플 함수
+        function shuffleWithEffect() {
+            const container = document.getElementById('main-container');
+            const inputs = document.querySelectorAll('.player-input:not([readonly])');
+            const shuffleBtn = document.getElementById('shuffle-btn');
+
+            // 1. 화면 진동 효과
+            container.classList.add('shake-active');
+            
+            // 2. 잠기지 않은 입력창에 글리치 효과
+            const rows = document.querySelectorAll('.lane-row');
+            rows.forEach(row => {
+                const lockBtn = row.querySelector('.lock-btn-pubg');
+                if (!lockBtn.classList.contains('active')) {
+                    row.querySelectorAll('.player-input').forEach(input => {
+                        input.classList.add('glitch-active');
+                    });
+                }
+            });
+
+            // 3. 실제 셔플 로직 실행 (약간의 지연 후 텍스트 교체)
+            setTimeout(() => {
+                shuffleTeams();
+                
+                // 효과 제거
+                container.classList.remove('shake-active');
+                document.querySelectorAll('.glitch-active').forEach(el => {
+                    el.classList.remove('glitch-active');
+                });
+            }, 300);
+        }
+
         function shuffleTeams() {
             const rows = document.querySelectorAll('.lane-row');
             rows.forEach(row => {
@@ -231,7 +273,7 @@
 
         function copyResult() {
             const rows = document.querySelectorAll('.lane-row');
-            let text = `[배틀그라운드 킬내기 결과]\n`;
+            let text = `[킬내기 팀 결과]\n`;
             
             rows.forEach(row => {
                 const tag = row.querySelector('.lane-tag').innerText;
