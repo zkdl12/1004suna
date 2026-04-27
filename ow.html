@@ -15,6 +15,32 @@
             --ow-card-bg: rgba(33, 37, 41, 0.98);
         }
 
+        /* 🤖 오버워치 테마 애니메이션 추가 */
+        @keyframes ow-glitch {
+            0% { opacity: 1; transform: scale(1); filter: brightness(1); }
+            30% { opacity: 0.7; transform: scale(1.02); filter: brightness(1.5) hue-rotate(10deg); }
+            60% { opacity: 0.8; transform: scale(0.98); filter: brightness(1.2); }
+            100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+        }
+
+        @keyframes ow-scan {
+            0% { box-shadow: 0 0 0px var(--ow-orange); }
+            50% { box-shadow: 0 0 20px var(--ow-orange); }
+            100% { box-shadow: 0 0 0px var(--ow-orange); }
+        }
+
+        @keyframes ow-shake {
+            0% { transform: translate(0,0); }
+            25% { transform: translate(-1px, 1px); }
+            50% { transform: translate(1px, -1px); }
+            75% { transform: translate(-1px, -1px); }
+            100% { transform: translate(0,0); }
+        }
+
+        .shuffle-anim { animation: ow-glitch 0.3s ease-in-out; }
+        .map-anim { animation: ow-scan 0.5s ease-in-out; }
+        .shake-ui { animation: ow-shake 0.2s ease-in-out; }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
@@ -24,7 +50,7 @@
             min-height: 100vh; padding: 20px; color: var(--ow-white);
         }
 
-        .container { width: 100%; max-width: 1150px; margin: auto; }
+        .container { width: 100%; max-width: 1150px; margin: auto; transition: transform 0.2s; }
 
         header { text-align: center; margin-bottom: 20px; }
         .game-logo-main { 
@@ -33,8 +59,8 @@
             margin: 0 auto 10px auto; display: block;
         }
 
-        .mode-selector { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .mode-btn { background: #333; border: 2px solid #555; padding: 8px 20px; border-radius: 50px; cursor: pointer; color: #fff; font-weight: 800; }
+        .mode-selector { display: flex; justify: center; gap: 10px; margin-bottom: 20px; justify-content: center; }
+        .mode-btn { background: #333; border: 2px solid #555; padding: 8px 20px; border-radius: 50px; cursor: pointer; color: #fff; font-weight: 800; transition: 0.2s; }
         .mode-btn.active { border-color: var(--ow-orange); background: var(--ow-orange); color: #000; }
 
         .main-content-wrapper { display: flex; gap: 20px; align-items: flex-start; }
@@ -49,7 +75,6 @@
 
         .section-title { font-size: 1.1rem; font-weight: 900; color: var(--ow-orange); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* --- 팀 리스트 스타일 수정 (핵심) --- */
         .lane-row { 
             display: flex; align-items: center; gap: 6px; margin-bottom: 10px; 
             padding: 8px; background: rgba(255,255,255,0.04); border-radius: 12px; 
@@ -57,17 +82,17 @@
         }
         
         .lane-tag { 
-            width: 55px; min-width: 55px; /* 너비 고정 */
+            width: 55px; min-width: 55px; 
             font-size: 0.7rem; font-weight: 900; color: #000; 
             text-align: center; background: #fff; padding: 10px 0; border-radius: 6px; 
             white-space: nowrap;
         }
 
         .player-input { 
-            flex: 1; /* 남은 공간 균등 배분 */
+            flex: 1; 
             width: 100%; height: 40px; background: rgba(0,0,0,0.2); 
             border: none; border-bottom: 2px solid #555; color: #fff; 
-            text-align: center; outline: none; font-size: 0.9rem;
+            text-align: center; outline: none; font-size: 0.9rem; transition: 0.2s;
         }
         
         .lock-btn-ow { 
@@ -77,15 +102,11 @@
             border-radius: 8px; filter: grayscale(100%); transition: 0.2s; 
             background-size: contain;
         }
-        
-        /* 자물쇠 이미지가 없을 경우를 대비한 대체 아이콘 */
-       
 
         .lock-btn-ow.active { opacity: 1; filter: grayscale(0%); border-color: var(--ow-orange); box-shadow: 0 0 8px var(--ow-orange); }
         .lane-row.locked-row { background: rgba(249, 158, 26, 0.1); border-color: var(--ow-orange); }
         .lane-row.locked-row .player-input { color: #aaa; border-bottom-color: rgba(249, 158, 26, 0.3); }
 
-        /* --- 맵 섹션 및 기타 스타일 --- */
         .mode-filter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
         .mode-chip { 
             padding: 12px 5px; font-size: 0.8rem; font-weight: 900; text-align: center; border-radius: 10px;
@@ -105,34 +126,31 @@
         }
         .map-item.banned { opacity: 0.2; text-decoration: line-through; }
 
-        .map-result-box { background: #000; border: 1px solid var(--ow-orange); padding: 18px; text-align: center; border-radius: 15px; margin-bottom: 15px; }
-        .map-result-box h2 { font-size: 1.5rem; color: var(--ow-orange); text-shadow: 0 0 10px rgba(249, 158, 26, 0.5); }
+        .map-result-box { background: #000; border: 1px solid var(--ow-orange); padding: 18px; text-align: center; border-radius: 15px; margin-bottom: 15px; position: relative; overflow: hidden; }
+        .map-result-box h2 { font-size: 1.5rem; color: var(--ow-orange); text-shadow: 0 0 10px rgba(249, 158, 26, 0.5); position: relative; z-index: 1; }
 
         .btn-container { display: flex; flex-direction: column; gap: 8px; }
-        .main-action-btn { background: var(--ow-orange); color: #000; border: none; padding: 16px; font-weight: 900; cursor: pointer; border-radius: 12px; text-transform: uppercase; }
+        .main-action-btn { background: var(--ow-orange); color: #000; border: none; padding: 16px; font-weight: 900; cursor: pointer; border-radius: 12px; text-transform: uppercase; transition: 0.2s; }
+        .main-action-btn:active { transform: scale(0.95); }
+        
         .sub-btn-group { display: flex; gap: 6px; }
-        .sub-action-btn { flex: 1; background: #333; border: 1px solid #444; padding: 11px; font-weight: 800; cursor: pointer; font-size: 0.8rem; color: #aaa; border-radius: 10px; }
+        .sub-action-btn { flex: 1; background: #333; border: 1px solid #444; padding: 11px; font-weight: 800; cursor: pointer; font-size: 0.8rem; color: #aaa; border-radius: 10px; transition: 0.2s; }
+        .sub-action-btn:active { transform: scale(0.95); }
         .copy-btn { border-color: var(--ow-orange); color: var(--ow-orange); }
 
         .home-btn { background: transparent; color: #666; border: none; cursor: pointer; margin: 20px auto; display: block; text-decoration: underline; width: 100%; }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
-
-        /* --- 모바일 최적화 미디어 쿼리 --- */
         @media (max-width: 768px) {
             body { padding: 10px; }
             .main-content-wrapper { flex-direction: column; gap: 15px; }
             .section-card { min-height: auto; padding: 15px; width: 100%; }
-            .mode-filter-grid { grid-template-columns: repeat(3, 1fr); }
-            .map-items-wrapper { grid-template-columns: repeat(2, 1fr); } /* 모바일에서 맵 리스트는 2열이 가독성 좋음 */
+            .map-items-wrapper { grid-template-columns: repeat(2, 1fr); }
             .lane-tag { width: 50px; min-width: 50px; font-size: 0.65rem; }
-            .player-input { font-size: 0.85rem; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="main-container">
         <header>
             <img src="https://stimg.sooplive.com/NORMAL_BBS/6/7137696/215569d1a8b3443e3.gif" class="game-logo-main">
             <h1 style="font-weight: 900; letter-spacing: 1px;">OVERWATCH <span style="color:var(--ow-orange)">팀 짜기</span></h1>
@@ -160,7 +178,7 @@
                 <div class="section-title">맵 선택 (클릭하여 제외)</div>
                 <div class="mode-filter-grid" id="mode-filter-grid"></div>
                 <div class="map-scroll-area" id="map-scroll-area"></div>
-                <div class="map-result-box">
+                <div class="map-result-box" id="map-result-box">
                     <p id="m-count" style="font-size: 0.65rem; color: #555; margin-bottom: 5px;">SELECTED 전장</p>
                     <h2 id="selected-map-name">READY</h2>
                 </div>
@@ -254,10 +272,25 @@
         }
 
         function shuffleTeams() {
+            const container = document.getElementById('main-container');
+            container.classList.add('shake-ui');
+            setTimeout(() => container.classList.remove('shake-ui'), 200);
+
             document.querySelectorAll('.lane-row').forEach(row => {
                 if (!row.querySelector('.lock-btn-ow').classList.contains('active')) {
-                    const i = row.querySelectorAll('.player-input');
-                    if (Math.random() > 0.5) { let tmp = i[0].value; i[0].value = i[1].value; i[1].value = tmp; }
+                    const inputs = row.querySelectorAll('.player-input');
+                    
+                    // 글리치 효과 추가
+                    inputs.forEach(input => input.classList.add('shuffle-anim'));
+                    
+                    setTimeout(() => {
+                        if (Math.random() > 0.5) { 
+                            let tmp = inputs[0].value; 
+                            inputs[0].value = inputs[1].value; 
+                            inputs[1].value = tmp; 
+                        }
+                        inputs.forEach(input => input.classList.remove('shuffle-anim'));
+                    }, 300);
                 }
             });
             tCount++;
@@ -270,10 +303,18 @@
                 if (!disabledModes.includes(mode)) pool.push(...maps.filter(m => !bannedMaps.includes(m)));
             });
             if (!pool.length) return alert("선택 가능한 맵이 없습니다!");
+            
+            const resultBox = document.getElementById('map-result-box');
+            resultBox.classList.add('map-anim');
+            
             lastMap = pool[Math.floor(Math.random() * pool.length)];
-            document.getElementById('selected-map-name').innerText = lastMap;
-            mCount++;
-            document.getElementById('m-count').innerText = `무작위 선택 (${mCount}회)`;
+            
+            setTimeout(() => {
+                document.getElementById('selected-map-name').innerText = lastMap;
+                mCount++;
+                document.getElementById('m-count').innerText = `무작위 선택 (${mCount}회)`;
+                resultBox.classList.remove('map-anim');
+            }, 500);
         }
 
         function resetTeams() {
