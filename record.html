@@ -3,69 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ANI.LAB - 통합 전적 센터</title>
+    <title>ANI.LAB - 전적 데이터 센터</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
         :root { --bg: #000; --card: #0a0a0a; --t1-red: #E4002B; --t1-gold: #C29E5E; --win: #00ffa3; --lose: #ff4d4d; --border: #222; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--bg); color: #fff; font-family: 'Pretendard', sans-serif; overflow-x: hidden; }
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% -20%, #300008 0%, transparent 50%); z-index: -1; }
-        
         .container { max-width: 1100px; margin: 0 auto; padding: 20px 10px; text-align: center; }
-        
-        /* 상단 탭 */
         .view-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
         .v-tab { background: transparent; border: 1px solid var(--t1-red); color: #fff; padding: 12px; cursor: pointer; font-weight: 800; border-radius: 4px; flex: 1; max-width: 150px; font-size: 0.9rem; transition: 0.3s; }
         .v-tab.active { background: var(--t1-red); box-shadow: 0 0 15px var(--t1-red); }
-
-        .top-visual img { width: 100%; max-width: 250px; border-radius: 10px; border: 2px solid var(--t1-red); margin-bottom: 15px; box-shadow: 0 0 20px rgba(228, 0, 43, 0.3); }
-        
-        /* 통산 승률 배너 */
-        #win-rate-banner { color: var(--t1-gold); font-weight: 900; margin-bottom: 15px; font-size: 1.1rem; letter-spacing: -0.5px; }
-
-        /* 테이블 스타일 */
+        .top-visual img { width: 100%; max-width: 280px; border-radius: 10px; border: 2px solid var(--t1-red); margin-bottom: 15px; box-shadow: 0 0 30px rgba(228, 0, 43, 0.4); }
+        #win-rate-banner { color: var(--t1-gold); font-weight: 900; margin-bottom: 15px; font-size: 1.1rem; }
         .table-wrapper { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow-x: auto; position: relative; margin-bottom: 50px; }
         .table-wrapper::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--t1-red); }
-        table { width: 100%; border-collapse: collapse; min-width: 700px; }
-        th { background: #111; color: var(--t1-gold); padding: 15px; font-size: 0.8rem; border-bottom: 1px solid var(--border); text-transform: uppercase; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; } /* 칸이 늘어나서 최소너비 살짝 증가 */
+        th { background: #111; color: var(--t1-gold); padding: 15px; font-size: 0.8rem; border-bottom: 1px solid var(--border); }
         td { padding: 18px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-
         .status-win { color: var(--win); font-weight: 900; font-size: 1.1rem; }
         .status-lose { color: var(--lose); font-weight: 900; font-size: 1.1rem; }
         .score-tag { display: block; font-size: 0.8rem; color: var(--t1-gold); margin-top: 4px; font-weight: 700; }
         
-        /* 계정 및 상대방 링크 버튼 */
-        .btn-link { background: transparent; border: 1px solid #444; color: #fff; padding: 5px 10px; cursor: pointer; font-size: 0.85rem; text-decoration: none; border-radius: 3px; font-weight: 700; transition: 0.2s; }
+        /* 포지션 텍스트 강조 */
+        .pos-text { color: var(--t1-red); font-weight: 900; font-size: 1rem; letter-spacing: 1px; }
+        
+        .btn-link { background: transparent; border: 1px solid #444; color: #fff; padding: 5px 10px; cursor: pointer; font-size: 0.85rem; text-decoration: none; border-radius: 3px; font-weight: 700; }
         .btn-link:hover { border-color: var(--t1-red); color: var(--t1-red); background: rgba(228, 0, 43, 0.1); }
-
         .sub-btn-group { display: flex; gap: 6px; justify-content: center; margin-top: 10px; }
         .sub-btn { font-size: 0.75rem; background: none; border: 1px solid #444; padding: 3px 8px; cursor: pointer; font-weight: 700; color: #888; border-radius: 2px; }
         .sub-btn.gold { color: var(--t1-gold); border-color: var(--t1-gold); }
         .sub-btn.red { color: var(--t1-red); border-color: var(--t1-red); }
 
-        /* 모달 시스템 (가로 방지 핵심) */
+        /* 모달 (가로 방지 핵심) */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); }
-        .modal-content { 
-            background: #0a0a0a; margin: 10% auto; padding: 40px 20px; border: 1px solid var(--t1-red); 
-            width: 90%; max-width: 450px; border-radius: 4px; position: relative; text-align: center;
-            box-shadow: 0 0 40px rgba(228, 0, 43, 0.4);
-        }
-        .modal-title { color: var(--t1-gold); font-size: 1rem; margin-bottom: 25px; font-weight: 900; letter-spacing: 1px; }
-        
+        .modal-content { background: #0a0a0a; margin: 10% auto; padding: 40px 20px; border: 1px solid var(--t1-red); width: 90%; max-width: 450px; border-radius: 4px; position: relative; text-align: center; box-shadow: 0 0 40px rgba(228, 0, 43, 0.4); }
         .matchup-list { display: flex; flex-direction: column; gap: 15px; width: 100%; }
-        .matchup-row { 
-            display: grid; grid-template-columns: 1fr 40px 1fr; align-items: center; 
-            background: #111; padding: 20px 10px; border-left: 4px solid var(--t1-red); 
-            position: relative; width: 100%;
-        }
+        .matchup-row { display: grid; grid-template-columns: 1fr 40px 1fr; align-items: center; background: #111; padding: 20px 10px; border-left: 4px solid var(--t1-red); position: relative; width: 100%; }
         .pos-label { position: absolute; left: 50%; transform: translateX(-50%); top: -8px; font-size: 10px; color: var(--t1-gold); font-weight: 900; background: #0a0a0a; padding: 0 6px; border: 1px solid #222; }
-        .vs-text { color: var(--t1-gold); font-weight: 900; font-size: 0.8rem; font-style: italic; }
-        .team-text { font-weight: 700; color: #fff; font-size: 1.1rem; }
-        
         .close-btn { position: absolute; top: 15px; right: 20px; color: #666; cursor: pointer; font-size: 1.8rem; }
-        .close-btn:hover { color: #fff; }
-
-        #modalDesc { color: #eee; font-size: 1.1rem; font-weight: 700; line-height: 1.6; word-break: keep-all; }
     </style>
 </head>
 <body>
@@ -74,10 +50,8 @@
             <button class="v-tab active" onclick="switchView('ck')">🏆 CK 전적</button>
             <button class="v-tab" onclick="switchView('solo')">🔥 솔랭내기</button>
         </div>
-        
         <div class="top-visual"><img src="https://stimg.sooplive.com/NORMAL_BBS/6/7137696/742869b7deaa2ed62.gif"></div>
         <div id="win-rate-banner">데이터 불러오는 중...</div>
-
         <div class="table-wrapper">
             <table>
                 <thead id="table-head"></thead>
@@ -89,9 +63,9 @@
     <div id="customModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
-            <div id="modalTitle" class="modal-title">상세 정보</div>
+            <div id="modalTitle" style="color:var(--t1-gold); margin-bottom:20px; font-weight:900;">정보</div>
             <div id="modalList" class="matchup-list"></div>
-            <div id="modalDesc" style="display:none;"></div>
+            <div id="modalDesc" style="display:none; color:#fff; font-weight:700; line-height:1.6;"></div>
         </div>
     </div>
 
@@ -100,8 +74,7 @@
         const SUPABASE_URL = 'https://ilwpkjdwizzjmcmfmvig.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_2IN7qgG_rvB6kcggisbmxA_XqInFAgy';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let currentType = 'ck';
-        let allCKData = [];
+        let currentType = 'ck'; let allCK = [];
 
         async function switchView(type) {
             currentType = type;
@@ -113,104 +86,78 @@
         async function loadData() {
             const list = document.getElementById('record-list');
             const head = document.getElementById('table-head');
-            list.innerHTML = '<tr><td colspan="5">데이터 로딩 중...</td></tr>';
+            list.innerHTML = '<tr><td colspan="6">데이터 로딩 중...</td></tr>';
 
             if(currentType === 'ck') {
-                head.innerHTML = `<tr><th width="15%">날짜</th><th width="15%">결과</th><th width="25%">CK명</th><th width="15%">상대</th><th width="30%">펀딩(인당)</th></tr>`;
+                // CK 헤더에 '포지션' 추가
+                head.innerHTML = `<tr><th width="12%">날짜</th><th width="12%">결과</th><th width="10%">포지션</th><th width="23%">대회정보</th><th width="13%">상대</th><th width="30%">펀딩(인당)</th></tr>`;
                 const { data } = await _supabase.from('records').select('*').order('date', { ascending: false });
-                allCKData = data || [];
-                renderTable(data, true);
+                allCK = data || []; renderTable(data, true);
             } else {
-                head.innerHTML = `<tr><th width="15%">날짜</th><th width="15%">결과</th><th width="25%">솔랭내기</th><th width="15%">계정</th><th width="30%">펀딩(인당)</th></tr>`;
+                // 솔랭내기 헤더
+                head.innerHTML = `<tr><th width="15%">날짜</th><th width="15%">결과</th><th width="30%">솔랭내기</th><th width="15%">계정</th><th width="25%">펀딩(인당)</th></tr>`;
                 const { data } = await _supabase.from('solo_records').select('*').order('date', { ascending: false });
                 renderTable(data, false);
             }
         }
 
         function renderTable(data, isCK) {
-            const list = document.getElementById('record-list');
-            list.innerHTML = '';
-            
-            // 전체 승률 계산
+            const list = document.getElementById('record-list'); list.innerHTML = '';
             const wins = data.filter(i => i.result.includes('승')).length;
-            const total = data.length;
-            const rate = total > 0 ? Math.round((wins / total) * 100) : 0;
-            document.getElementById('win-rate-banner').innerText = `통산 ${isCK?'CK':'솔랭내기'} 승률: ${rate}% (${wins}승 ${total-wins}패)`;
+            const rate = data.length > 0 ? Math.round((wins / data.length) * 100) : 0;
+            document.getElementById('win-rate-banner').innerText = `통산 ${isCK?'CK':'솔랭내기'} 승률: ${rate}% (${wins}승 ${data.length-wins}패)`;
 
             data?.forEach(item => {
                 const isWin = item.result.includes('승');
                 const funding = Number(item.funding || 0);
                 const players = isCK ? 5 : (item.players || 1);
                 
-                let btns = `<div class="sub-btn-group">
-                    <button class="sub-btn gold" onclick="openMatchup('${item.members}', ${isCK})">라인업</button>`;
+                let btns = `<div class="sub-btn-group"><button class="sub-btn gold" onclick="openMatchup('${item.members}', ${isCK})">라인업</button>`;
                 if(item.memo) btns += `<button class="sub-btn red" onclick="openMemo('${item.memo}')">메모</button>`;
                 btns += `</div>`;
 
-                list.innerHTML += `
-                    <tr>
-                        <td style="color:#555; font-size:0.75rem;">${item.date}</td>
-                        <td><span class="${isWin?'status-win':'status-lose'}">${isWin?'WIN':'LOSE'}</span><span class="score-tag">${item.score || '0:0'}</span></td>
-                        <td style="font-weight:800;">${item.title}${btns}</td>
-                        <td>
-                            ${isCK ? 
-                                `<button class="btn-link" onclick="showOppRate('${item.opponent}')">${item.opponent || '-'}</button>` : 
-                                `<a href="https://www.fow.lol/find/kr/${item.account?.replace('#','-')}" target="_blank" class="btn-link">${item.account || '전적'}</a>`
-                            }
-                        </td>
-                        <td style="font-weight:800;">${funding.toLocaleString()}개<br><span style="color:var(--t1-gold); font-size:0.75rem;">인당: ${Math.floor(funding/players).toLocaleString()}개</span></td>
-                    </tr>`;
+                let row = `<tr>
+                    <td style="color:#555; font-size:0.75rem;">${item.date}</td>
+                    <td><span class="${isWin?'status-win':'status-lose'}">${isWin?'WIN':'LOSE'}</span><span class="score-tag">${item.score || '0:0'}</span></td>`;
+                
+                // CK일 때만 '포지션' TD 추가
+                if(isCK) {
+                    row += `<td class="pos-text">${item.position || '-'}</td>`;
+                }
+
+                row += `<td style="font-weight:800;">${item.title}${btns}</td>
+                    <td>${isCK ? `<button class="btn-link" onclick="showOppRate('${item.opponent}')">${item.opponent || '-'}</button>` : `<a href="https://www.fow.lol/find/kr/${item.account?.replace('#','-')}" target="_blank" class="btn-link">${item.account || '전적'}</a>`}</td>
+                    <td style="font-weight:800;">${funding.toLocaleString()}개<br><span style="color:var(--t1-gold); font-size:0.75rem;">인당: ${Math.floor(funding/players).toLocaleString()}개</span></td>
+                </tr>`;
+                list.innerHTML += row;
             });
         }
 
-        // 상대 승률 박스 (모달 활용)
-        function showOppRate(opp) {
-            const matches = allCKData.filter(i => i.opponent === opp);
-            const wins = matches.filter(i => i.result.includes('승')).length;
-            const total = matches.length;
-            const rate = total > 0 ? Math.round((wins / total) * 100) : 0;
-            
-            document.getElementById('modalList').style.display = "none";
-            const desc = document.getElementById('modalDesc');
-            desc.style.display = "block";
-            desc.innerHTML = `<span style="color:var(--t1-gold); font-size:1.4rem;">${opp}</span> 상대 전적<br><br><span style="font-size:2rem; color:var(--win);">${rate}%</span><br>(${wins}승 ${total-wins}패)`;
-            document.getElementById('modalTitle').innerText = "상대 전적 통계";
+        function openMatchup(members, isCK) {
+            const modalList = document.getElementById('modalList'); const modalDesc = document.getElementById('modalDesc');
+            modalList.innerHTML = ""; modalList.style.display = "flex"; modalDesc.style.display = "none";
+            document.getElementById('modalTitle').innerText = isCK ? "CK 라인업 매치업" : "솔랭내기 라인업";
+            if(!members || members === 'null') return;
+            const positions = ['TOP', 'JGL', 'MID', 'AD', 'SUP', '6TH'];
+            members.split(',').forEach((pair, index) => {
+                const [a, b] = pair.split('vs');
+                modalList.innerHTML += `<div class="matchup-row">${(isCK && positions[index])?`<div class="pos-label">${positions[index]}</div>`:''}<div class="team-text" style="text-align:right; font-weight:700;">${a||'-'}</div><div class="vs-text">VS</div><div class="team-text" style="text-align:left; font-weight:700;">${b||'-'}</div></div>`;
+            });
             document.getElementById('customModal').style.display = "block";
         }
 
-        function openMatchup(members, isCK) {
-            const modalList = document.getElementById('modalList');
-            const modalDesc = document.getElementById('modalDesc');
-            modalList.innerHTML = "";
-            modalList.style.display = "flex";
-            modalDesc.style.display = "none";
-            document.getElementById('modalTitle').innerText = isCK ? "CK 포지션 매치업" : "솔랭내기 매치업";
-
-            if(!members || members === 'null') {
-                modalList.innerHTML = "<div style='color:#555;'>등록된 라인업 정보가 없습니다.</div>";
-            } else {
-                const positions = ['TOP', 'JGL', 'MID', 'AD', 'SUP', '6TH'];
-                members.split(',').forEach((pair, index) => {
-                    const [a, b] = pair.split('vs');
-                    const labelHtml = (isCK && positions[index]) ? `<div class="pos-label">${positions[index]}</div>` : '';
-                    modalList.innerHTML += `
-                        <div class="matchup-row">
-                            ${labelHtml}
-                            <div class="team-text" style="text-align:right;">${a?.trim() || '-'}</div>
-                            <div class="vs-text">VS</div>
-                            <div class="team-text" style="text-align:left;">${b?.trim() || '-'}</div>
-                        </div>`;
-                });
-            }
-            document.getElementById('customModal').style.display = "block";
+        function showOppRate(opp) {
+            const matches = allCK.filter(i => i.opponent === opp);
+            const wins = matches.filter(i => i.result.includes('승')).length;
+            const rate = matches.length > 0 ? Math.round((wins / matches.length) * 100) : 0;
+            openMemo(`${opp} 상대 통산 승률<br><br><span style='font-size:2rem; color:var(--win);'>${rate}%</span><br>(${wins}승 ${matches.length-wins}패)`);
         }
 
         function openMemo(memo) {
             document.getElementById('modalList').style.display = "none";
             const desc = document.getElementById('modalDesc');
-            desc.style.display = "block";
-            desc.innerText = memo;
-            document.getElementById('modalTitle').innerText = "특이사항 메모";
+            desc.innerHTML = memo; desc.style.display = "block";
+            document.getElementById('modalTitle').innerText = "상세 정보";
             document.getElementById('customModal').style.display = "block";
         }
 
