@@ -2,173 +2,170 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ANI.LAB - 전적 관리자</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANI.LAB - 통합 관리자</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
         :root { --bg: #fff0f3; --accent: #ff007f; --sub: #ff85a1; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
-        body { background: var(--bg); padding: 20px; color: #333; }
-        
-        .admin-wrapper { max-width: 900px; margin: 0 auto; }
-
-        /* 🚀 상단 네비게이션 버튼 */
-        .nav-bar { 
-            display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end; 
-        }
-        .nav-btn { 
-            text-decoration: none; padding: 10px 18px; border-radius: 10px; 
-            font-size: 0.85rem; font-weight: 800; transition: 0.3s;
-            background: #fff; color: var(--sub); border: 2px solid #ffe4e9;
-        }
-        .nav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-        .card { 
-            background: #fff; padding: 40px; border-radius: 30px; 
-            border: 3px solid #ffe4e9; box-shadow: 0 20px 40px rgba(255,0,127,0.05); 
-            margin-bottom: 30px; 
-        }
-        
-        h2 { font-size: 1.8rem; font-weight: 900; color: var(--accent); margin-bottom: 30px; border-left: 8px solid var(--accent); padding-left: 20px; }
-        
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .box { display: flex; flex-direction: column; gap: 8px; }
-        .full { grid-column: span 2; }
-        
-        label { font-size: 0.85rem; font-weight: 800; color: var(--sub); }
-        input, select { padding: 15px; border: 2px solid #ffe4e9; border-radius: 12px; outline: none; background: #fff9fa; font-size: 1rem; }
-        input:focus { border-color: var(--accent); background: #fff; }
-        
-        .btn-submit { width: 100%; padding: 20px; background: var(--accent); color: #fff; border: none; border-radius: 15px; font-weight: 900; font-size: 1.2rem; cursor: pointer; margin-top: 10px; transition: 0.3s; box-shadow: 0 10px 20px rgba(255,0,127,0.2); }
-        .btn-submit:hover { transform: translateY(-3px); filter: brightness(1.05); }
-
-        .table-wrapper { overflow-x: auto; }
-        .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .table th { text-align: left; padding: 15px; color: var(--sub); font-size: 0.8rem; border-bottom: 2px solid var(--bg); }
-        .table td { padding: 15px; border-bottom: 1px solid var(--bg); font-size: 0.9rem; }
-        
-        .action-btn { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: 800; font-size: 0.75rem; }
-        .edit { background: #eee; color: #666; margin-right: 5px; }
-        .del { background: #ffebeb; color: #ff4d4d; }
-
-        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } .full { grid-column: span 1; } }
+        body { background: var(--bg); padding: 20px; }
+        .card { background: #fff; max-width: 900px; margin: 0 auto 30px; padding: 30px; border-radius: 20px; border: 3px solid #ffe4e9; }
+        .tab-menu { display: flex; gap: 10px; max-width: 900px; margin: 0 auto 20px; }
+        .tab-btn { flex: 1; padding: 15px; border-radius: 10px; border: 2px solid #ffe4e9; cursor: pointer; font-weight: 800; background: #fff; color: var(--sub); }
+        .tab-btn.active { background: var(--accent); color: #fff; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .box { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 0.8rem; font-weight: 800; color: var(--sub); }
+        input, select { padding: 12px; border: 2px solid #eee; border-radius: 10px; outline: none; }
+        .btn-main { grid-column: span 2; padding: 18px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-weight: 900; cursor: pointer; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.85rem; }
+        .table th, .table td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+        .action-btn { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: 800; font-size: 0.7rem; }
+        .edit-btn { background: #eee; color: #666; margin-right: 5px; }
+        .del-btn { background: #ffebeb; color: #ff4d4d; }
     </style>
 </head>
 <body>
-
-<div class="admin-wrapper">
-    <div class="nav-bar">
-        <a href="index.html" class="nav-btn">메인 화면으로</a>
-        <a href="record.html" class="nav-btn">전적 데이터 확인</a>
+    <div class="tab-menu">
+        <button class="tab-btn active" id="ck-tab" onclick="switchTab('ck')">🏆 CK 전적</button>
+        <button class="tab-btn" id="solo-tab" onclick="switchTab('solo')">🔥 솔랭내기</button>
     </div>
 
     <div class="card">
-        <h2 id="form-title">데이터 입력</h2>
-        <form id="recordForm">
+        <h2 id="form-title" style="color:var(--accent); margin-bottom:20px;">전적 입력</h2>
+        <form id="main-form">
             <input type="hidden" id="edit-id">
-            <div class="grid">
-                <div class="box"><label>날짜</label><input type="date" id="date" required></div>
-                <div class="box"><label>대회명</label><input type="text" id="title" placeholder="멸망전, CK 등" required></div>
-                <div class="box"><label>결과</label><select id="result"><option value="승">WIN</option><option value="패">LOSE</option></select></div>
-                <div class="box"><label>세트 스코어</label><input type="text" id="score" placeholder="3:2"></div>
-                <div class="box"><label>맞라인 상대</label><input type="text" id="opponent" placeholder="상대 BJ 닉네임"></div>
-                <div class="box"><label>펀딩 총액</label><input type="number" id="funding" placeholder="숫자만 입력"></div>
-                
-                <div class="box full">
-                    <label>라인업 (입력예시: 상대vs우리, 상대vs우리)</label>
-                    <input type="text" id="members" placeholder="포지션별 vs와 쉼표 구분">
-                </div>
-                
-                <div class="box full"><label>특이사항 (메모)</label><input type="text" id="memo" placeholder="전적 페이지에 표시될 메모"></div>
+            <div id="ck-fields" class="grid">
+                <div class="box"><label>날짜</label><input type="date" id="ck-date"></div>
+                <div class="box"><label>대회명</label><input type="text" id="ck-title"></div>
+                <div class="box"><label>결과</label><select id="ck-result"><option value="승">WIN</option><option value="패">LOSE</option></select></div>
+                <div class="box"><label>스코어</label><input type="text" id="ck-score"></div>
+                <div class="box"><label>상대</label><input type="text" id="ck-opp"></div>
+                <div class="box"><label>펀딩</label><input type="number" id="ck-fund"></div>
+                <div class="box" style="grid-column: span 2;"><label>라인업 (상대vs우리...)</label><input type="text" id="ck-mem"></div>
+                <div class="box" style="grid-column: span 2;"><label>메모</label><input type="text" id="ck-memo"></div>
             </div>
-            <button type="submit" id="submitBtn" class="btn-submit">데이터 저장하기</button>
-            <button type="button" id="cancelBtn" style="display:none; background:#aaa; margin-top:10px;" class="btn-submit">수정 취소</button>
+            <div id="solo-fields" class="grid" style="display:none;">
+                <div class="box"><label>날짜</label><input type="date" id="solo-date"></div>
+                <div class="box"><label>내기명</label><input type="text" id="solo-title"></div>
+                <div class="box"><label>결과</label><select id="solo-result"><option value="승">WIN</option><option value="패">LOSE</option></select></div>
+                <div class="box"><label>스코어</label><input type="text" id="solo-score"></div>
+                <div class="box"><label>계정(포우용)</label><input type="text" id="solo-acc"></div>
+                <div class="box"><label>인원수</label><input type="number" id="solo-play"></div>
+                <div class="box"><label>펀딩</label><input type="number" id="solo-fund"></div>
+                <div class="box" style="grid-column: span 2;"><label>라인업 (상대vs우리...)</label><input type="text" id="solo-mem"></div>
+                <div class="box" style="grid-column: span 2;"><label>메모</label><input type="text" id="solo-memo"></div>
+            </div>
+            <button type="submit" id="submit-btn" class="btn-main" style="margin-top:20px;">데이터 저장하기</button>
+            <button type="button" id="cancel-btn" class="btn-main" style="background:#aaa; margin-top:10px; display:none;" onclick="location.reload()">수정 취소</button>
         </form>
     </div>
 
     <div class="card">
-        <h2>최근 기록 관리</h2>
-        <div class="table-wrapper">
-            <table class="table">
-                <thead><tr><th>날짜</th><th>대회명</th><th>결과</th><th>관리</th></tr></thead>
-                <tbody id="list"></tbody>
-            </table>
-        </div>
+        <h3>최근 전적 리스트</h3>
+        <table class="table">
+            <thead><tr><th>날짜</th><th>내용</th><th>결과</th><th>관리</th></tr></thead>
+            <tbody id="manage-list"></tbody>
+        </table>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    const SUPABASE_URL = 'https://ilwpkjdwizzjmcmfmvig.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_2IN7qgG_rvB6kcggisbmxA_XqInFAgy';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://ilwpkjdwizzjmcmfmvig.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_2IN7qgG_rvB6kcggisbmxA_XqInFAgy';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let mode = 'ck';
 
-    async function fetchRecords() {
-        const { data } = await _supabase.from('records').select('*').order('date', { ascending: false });
-        const tbody = document.getElementById('list');
-        tbody.innerHTML = '';
-        data?.forEach(item => {
-            tbody.innerHTML += `
-                <tr>
-                    <td>${item.date}</td>
-                    <td><b>${item.title}</b></td>
-                    <td style="color:${item.result==='승'?'#00d084':'#ff4d4d'}">${item.result}</td>
-                    <td>
-                        <button class="action-btn edit" onclick="editMode('${item.id}','${item.date}','${item.title}','${item.result}','${item.score}','${item.opponent}','${item.funding}','${item.members}','${item.memo}')">수정</button>
-                        <button class="action-btn del" onclick="delRecord('${item.id}')">삭제</button>
-                    </td>
-                </tr>`;
-        });
-    }
-
-    document.getElementById('recordForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const id = document.getElementById('edit-id').value;
-        const payload = {
-            date: document.getElementById('date').value,
-            title: document.getElementById('title').value,
-            result: document.getElementById('result').value,
-            score: document.getElementById('score').value,
-            opponent: document.getElementById('opponent').value,
-            funding: parseInt(document.getElementById('funding').value) || 0,
-            members: document.getElementById('members').value,
-            memo: document.getElementById('memo').value
-        };
-
-        if(id) await _supabase.from('records').update(payload).eq('id', id);
-        else await _supabase.from('records').insert([payload]);
-        
-        alert("성공적으로 저장되었습니다!");
-        location.reload();
-    });
-
-    window.editMode = (id, d, t, r, s, o, f, m, memo) => {
-        document.getElementById('edit-id').value = id;
-        document.getElementById('date').value = d;
-        document.getElementById('title').value = t;
-        document.getElementById('result').value = r;
-        document.getElementById('score').value = s === 'null' ? '' : s;
-        document.getElementById('opponent').value = o;
-        document.getElementById('funding').value = f;
-        document.getElementById('members').value = m === 'null' ? '' : m;
-        document.getElementById('memo').value = memo === 'null' ? '' : memo;
-        
-        document.getElementById('form-title').innerText = "데이터 수정 중...";
-        document.getElementById('submitBtn').innerText = "수정 완료하기";
-        document.getElementById('cancelBtn').style.display = "block";
-        window.scrollTo(0,0);
-    }
-
-    window.delRecord = async (id) => {
-        if(confirm("진짜 삭제할 거임? 복구 안 됨.")) {
-            await _supabase.from('records').delete().eq('id', id);
-            fetchRecords();
+        function switchTab(t) {
+            mode = t;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(t+'-tab').classList.add('active');
+            document.getElementById('ck-fields').style.display = t === 'ck' ? 'grid' : 'none';
+            document.getElementById('solo-fields').style.display = t === 'solo' ? 'grid' : 'none';
+            fetchList();
         }
-    }
 
-    document.getElementById('cancelBtn').addEventListener('click', () => { location.reload(); });
+        async function fetchList() {
+            const table = mode === 'ck' ? 'records' : 'solo_records';
+            const { data } = await _supabase.from(table).select('*').order('date', { ascending: false });
+            const list = document.getElementById('manage-list');
+            list.innerHTML = '';
+            data?.forEach(item => {
+                list.innerHTML += `<tr><td>${item.date}</td><td>${item.title}</td><td>${item.result}</td><td>
+                    <button class="action-btn edit-btn" onclick="editMode('${item.id}')">수정</button>
+                    <button class="action-btn del-btn" onclick="delData('${item.id}')">삭제</button>
+                </td></tr>`;
+            });
+        }
 
-    window.onload = fetchRecords;
-</script>
+        async function editMode(id) {
+            const table = mode === 'ck' ? 'records' : 'solo_records';
+            const { data } = await _supabase.from(table).select('*').eq('id', id).single();
+            document.getElementById('edit-id').value = id;
+            if(mode === 'ck') {
+                document.getElementById('ck-date').value = data.date;
+                document.getElementById('ck-title').value = data.title;
+                document.getElementById('ck-result').value = data.result;
+                document.getElementById('ck-score').value = data.score;
+                document.getElementById('ck-opp').value = data.opponent;
+                document.getElementById('ck-fund').value = data.funding;
+                document.getElementById('ck-mem').value = data.members;
+                document.getElementById('ck-memo').value = data.memo;
+            } else {
+                document.getElementById('solo-date').value = data.date;
+                document.getElementById('solo-title').value = data.title;
+                document.getElementById('solo-result').value = data.result;
+                document.getElementById('solo-score').value = data.score;
+                document.getElementById('solo-acc').value = data.account;
+                document.getElementById('solo-play').value = data.players;
+                document.getElementById('solo-fund').value = data.funding;
+                document.getElementById('solo-mem').value = data.members;
+                document.getElementById('solo-memo').value = data.memo;
+            }
+            document.getElementById('form-title').innerText = "데이터 수정 모드";
+            document.getElementById('submit-btn').innerText = "수정 완료하기";
+            document.getElementById('cancel-btn').style.display = "block";
+            window.scrollTo(0,0);
+        }
+
+        async function delData(id) {
+            if(confirm("진짜 삭제하시겠습니까?")) {
+                const table = mode === 'ck' ? 'records' : 'solo_records';
+                await _supabase.from(table).delete().eq('id', id);
+                fetchList();
+            }
+        }
+
+        document.getElementById('main-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-id').value;
+            const table = mode === 'ck' ? 'records' : 'solo_records';
+            const payload = mode === 'ck' ? {
+                date: document.getElementById('ck-date').value,
+                title: document.getElementById('ck-title').value,
+                result: document.getElementById('ck-result').value,
+                score: document.getElementById('ck-score').value,
+                opponent: document.getElementById('ck-opp').value,
+                funding: parseInt(document.getElementById('ck-fund').value) || 0,
+                members: document.getElementById('ck-mem').value,
+                memo: document.getElementById('ck-memo').value
+            } : {
+                date: document.getElementById('solo-date').value,
+                title: document.getElementById('solo-title').value,
+                result: document.getElementById('solo-result').value,
+                score: document.getElementById('solo-score').value,
+                account: document.getElementById('solo-acc').value,
+                players: parseInt(document.getElementById('solo-play').value) || 1,
+                funding: parseInt(document.getElementById('solo-fund').value) || 0,
+                members: document.getElementById('solo-mem').value,
+                memo: document.getElementById('solo-memo').value
+            };
+            if(id) await _supabase.from(table).update(payload).eq('id', id);
+            else await _supabase.from(table).insert([payload]);
+            location.reload();
+        });
+
+        window.onload = fetchList;
+    </script>
 </body>
 </html>
