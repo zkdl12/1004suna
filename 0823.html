@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANI.LAB - 방셀게시판</title>
+
+    <!-- Google Analytics (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SK6ZXVNPCR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-SK6ZXVNPCR');
+    </script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
-        /* T1 전적 사이트 완벽 복사 테마 (CSS 생략 - 형님 코드 그대로 유지) */
         :root { --t1-red: #E4002B; --bg-dark: #050505; --table-header: #0f0f0f; --table-row: #0a0a0a; --gold: #C29E5E; --border: #1a1a1a; }
         body { background: var(--bg-dark); color: #fff; font-family: 'Pretendard', sans-serif; margin: 0; padding: 20px; }
         .container { max-width: 1200px; margin: 0 auto; }
@@ -23,6 +33,8 @@
         .link-btn { display: inline-block; text-decoration: none; color: var(--gold); border: 1px solid var(--gold); padding: 5px 12px; font-size: 0.75rem; font-weight: 800; transition: 0.2s; }
         .link-btn:hover { background: var(--gold); color: #000; }
         #status-msg { text-align: center; color: var(--gold); margin-top: 50px; font-weight: 800; }
+        
+        /* 모바일 반응형 디자인 레이아웃 반영 */
         @media (max-width: 900px) {
             .bangsel-table, .table-header, .table-row, td, th { display: block; width: 100%; }
             .table-header { display: none; }
@@ -71,7 +83,6 @@
 
             statusMsg.style.display = 'none';
             listContainer.innerHTML = data.map(i => {
-                // 💡 [핵심 수정] 내용에서 '/' 기호를 찾아서 공백으로 싹 바꿈 (정규식 사용)
                 const cleanContent = i.content ? i.content.replace(/\//g, ' ') : '';
 
                 return `
