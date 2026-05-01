@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-        <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WLFLL6GS');</script>
-    <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANI.LAB - 통합 관리 시스템</title>
@@ -16,6 +9,13 @@
         :root { --bg: #fff0f3; --accent: #ff007f; --sub: #ff85a1; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
         body { background: var(--bg); padding: 20px; }
+        
+        /* 🔒 로그인 섹션 */
+        #auth-wrap { height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .login-box { background: #fff; padding: 40px; border-radius: 20px; border: 3px solid #ffe4e9; width: 320px; text-align: center; }
+        .login-box h2 { color: var(--accent); margin-bottom: 25px; font-weight: 900; }
+        
+        /* 🛠 관리 섹션 (초기 숨김) */
         #admin-content { display: none; max-width: 900px; margin: 0 auto; }
         
         .nav-bar { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -42,14 +42,23 @@
     </style>
 </head>
 <body>
-        <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WLFLL6GS"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+
+<!-- 로그인 화면 -->
+<div id="auth-wrap">
+    <div class="login-box">
+        <h2>ADMIN LOGIN</h2>
+        <input type="email" id="email" placeholder="이메일" style="width:100%; margin-bottom:10px; padding:12px; border:2px solid #eee; border-radius:10px;">
+        <input type="password" id="pw" placeholder="비밀번호" style="width:100%; margin-bottom:20px; padding:12px; border:2px solid #eee; border-radius:10px;">
+        <button onclick="handleLogin()" class="submit-btn" style="margin:0;">매니저 인증</button>
+    </div>
+</div>
+
+<!-- 관리 도구 컨텐츠 -->
 <div id="admin-content">
     <div class="nav-bar">
         <a href="index.html" class="nav-btn">🏠 메인 화면</a>
         <a href="record.html" class="nav-btn">📊 전적 센터</a>
+        <button onclick="handleLogout()" class="nav-btn" style="border-color:#ff4d4d; color:#ff4d4d;">🔒 로그아웃</button>
     </div>
 
     <div class="tab-menu">
@@ -80,25 +89,33 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    const ADMIN_PW = "zkzk8703!";
     const _supabase = supabase.createClient('https://ilwpkjdwizzjmcmfmvig.supabase.co', 'sb_publishable_2IN7qgG_rvB6kcggisbmxA_XqInFAgy');
     let mode = 'ck';
 
-    function checkAuth() {
-        if (localStorage.getItem("ani_auth") !== "ok") {
-            const pw = prompt("관리자 비번 입력");
-            if (pw === ADMIN_PW) { localStorage.setItem("ani_auth", "ok"); showAdmin(); }
-            else { alert("비번 틀림"); location.href="index.html"; }
-        } else showAdmin();
+    async function handleLogin() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('pw').value;
+        const { error } = await _supabase.auth.signInWithPassword({ email, password });
+        if (error) alert("인증 실패: " + error.message);
+        else checkAuth();
     }
 
-    function showAdmin() { document.getElementById('admin-content').style.display = "block"; switchTab('ck'); }
+    async function checkAuth() {
+        const { data: { user } } = await _supabase.auth.getUser();
+        if (user) {
+            document.getElementById('auth-wrap').style.display = "none";
+            document.getElementById('admin-content').style.display = "block";
+            switchTab('ck');
+        }
+    }
+
+    async function handleLogout() { await _supabase.auth.signOut(); location.reload(); }
 
     function switchTab(t) {
         mode = t;
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(t+'-tab').classList.add('active');
-        document.getElementById('edit-id').value = ""; // 탭 옮기면 수정 모드 초기화
+        document.getElementById('edit-id').value = "";
         renderFields(); fetchList();
     }
 
@@ -138,7 +155,6 @@
         });
     }
 
-    // 🚀 수정 모드 활성화 함수 (복구 완료)
     async function editMode(id) {
         const table = mode==='ck'?'records':(mode==='land'?'land_records':'solo_records');
         const { data } = await _supabase.from(table).select('*').eq('id', id).single();
@@ -209,10 +225,10 @@
             payload.players = 5;
         }
 
-        if(id) { // 수정 모드
+        if(id) {
             await _supabase.from(table).update(payload).eq('id', id);
             alert("수정되었습니다.");
-        } else { // 신규 저장
+        } else {
             await _supabase.from(table).insert([payload]);
             alert("저장되었습니다.");
         }
